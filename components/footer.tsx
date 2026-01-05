@@ -9,6 +9,9 @@ export function Footer() {
           </div>
 
           <div className="flex gap-8 text-sm text-muted-foreground">
+            <a href="/pricing" className="hover:text-foreground transition-colors">
+              Pricing
+            </a>
             <a href="#" className="hover:text-foreground transition-colors">
               Privacy
             </a>

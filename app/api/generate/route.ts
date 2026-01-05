@@ -75,16 +75,11 @@ export async function POST(req: Request) {
     if (!prompt) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 })
     }
-    if (!(imageValue instanceof Blob)) {
+    if (!(imageValue instanceof File)) {
       return NextResponse.json({ error: "Missing image file" }, { status: 400 })
     }
 
-    const imageFile =
-      imageValue instanceof File
-        ? imageValue
-        : new File([imageValue], "upload.png", {
-            type: imageValue.type || "application/octet-stream",
-          })
+    const imageFile = imageValue
 
     if (imageFile.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: "Image is too large (max 10MB)." }, { status: 413 })
