@@ -17,6 +17,7 @@ type BillingInterval = "monthly" | "yearly"
 type Props = {
   products: CreemPricingProducts
   customerEmail: string | null
+  customerReferenceId: string | null
   creemEnabled: boolean
 }
 
@@ -106,7 +107,7 @@ function formatUsd(amount: number) {
   }).format(amount)
 }
 
-export function PricingClient({ products, customerEmail, creemEnabled }: Props) {
+export function PricingClient({ products, customerEmail, customerReferenceId, creemEnabled }: Props) {
   const [interval, setInterval] = useState<BillingInterval>("monthly")
   const [currency, setCurrency] = useState("USD")
   const [unitsByPlan, setUnitsByPlan] = useState<Record<CreemPricingTierKey, number>>({
@@ -297,6 +298,7 @@ export function PricingClient({ products, customerEmail, creemEnabled }: Props) 
                   hrefParams.set("productId", productId)
                   if (units > 1) hrefParams.set("units", String(units))
                   if (customerEmail) hrefParams.set("customer", JSON.stringify({ email: customerEmail }))
+                  if (customerReferenceId) hrefParams.set("referenceId", customerReferenceId)
                   hrefParams.set("successUrl", "/success")
                   hrefParams.set(
                     "metadata",

@@ -43,7 +43,9 @@ export function Reviews() {
                   <Star key={i} className="w-5 h-5 fill-primary text-primary" />
                 ))}
               </div>
-              <p className="text-muted-foreground mb-6 leading-relaxed">"{review.review}"</p>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                &ldquo;{review.review}&rdquo;
+              </p>
               <div className="flex items-center gap-3">
                 <div className="text-3xl">{review.avatar}</div>
                 <div>

@@ -15,10 +15,12 @@ export default async function PricingPage() {
   const creemEnabled = Boolean(process.env.CREEM_API_KEY?.trim())
 
   let customerEmail: string | null = null
+  let customerReferenceId: string | null = null
   try {
     const supabase = await createClient()
     const { data } = await supabase.auth.getUser()
     customerEmail = data.user?.email ?? null
+    customerReferenceId = data.user?.id ?? null
   } catch {
     // Supabase not configured or user not logged in.
   }
@@ -26,7 +28,12 @@ export default async function PricingPage() {
   return (
     <main className="min-h-screen">
       <Header />
-      <PricingClient products={products} customerEmail={customerEmail} creemEnabled={creemEnabled} />
+      <PricingClient
+        products={products}
+        customerEmail={customerEmail}
+        customerReferenceId={customerReferenceId}
+        creemEnabled={creemEnabled}
+      />
       <Footer />
     </main>
   )

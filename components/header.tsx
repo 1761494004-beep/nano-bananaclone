@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { isSupabaseConfigured } from "@/lib/supabase/env"
@@ -41,42 +42,42 @@ export function Header() {
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="text-2xl">🍌</div>
           <span className="font-bold text-xl text-foreground">Nano Banana</span>
-        </a>
+        </Link>
         <nav className="hidden md:flex items-center gap-8">
-          <a
+          <Link
             href="/#editor"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Editor
-          </a>
-          <a
+          </Link>
+          <Link
             href="/#features"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Features
-          </a>
-          <a
+          </Link>
+          <Link
             href="/#showcase"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Showcase
-          </a>
-          <a href="/#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link href="/#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             FAQ
-          </a>
-          <a
+          </Link>
+          <Link
             href="/pricing"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Pricing
-          </a>
+          </Link>
         </nav>
         <div className="flex items-center gap-3">
           <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-            <a href="/#editor">Start Editing</a>
+            <Link href="/#editor">Start Editing</Link>
           </Button>
 
           {supabaseConfigured ? (
@@ -93,7 +94,7 @@ export function Header() {
               </>
             ) : (
               <Button asChild variant="outline">
-                <a href="/auth/signin/google?next=/">Sign in with Google</a>
+                <Link href="/auth/signin/google?next=/">Sign in with Google</Link>
               </Button>
             )
           ) : (
