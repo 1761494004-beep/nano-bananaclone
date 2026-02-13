@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server"
+import { isSupabaseConfigured } from "@/lib/supabase/env"
+import { createClient } from "@/lib/supabase/server"
+import { CREDITS_PER_GENERATION } from "@/lib/credits"
+import { createAdminClient } from "@/lib/supabase/admin"
 
 const KIE_API_BASE_URL = "https://api.kie.ai"
 const KIE_UPLOAD_BASE_URL = "https://kieai.redpandaai.co"
@@ -59,6 +63,26 @@ async function readJson<T>(res: Response): Promise<T> {
 export const runtime = "nodejs"
 
 export async function POST(req: Request) {
+  const creditsCost = CREDITS_PER_GENERATION
+  let deducted = false
+  let creditsBefore: number | null = null
+  let userId: string | null = null
+
+  async function refundCreditsIfNeeded() {
+    if (!deducted || creditsBefore === null || !userId) return
+    try {
+      const supabaseAdmin = createAdminClient()
+      await supabaseAdmin
+        .from("user_credits")
+        .upsert(
+          { user_id: userId, credits: creditsBefore, updated_at: new Date().toISOString() },
+          { onConflict: "user_id" },
+        )
+    } catch {
+      // Best-effort refund. Avoid masking the original error response.
+    }
+  }
+
   try {
     const apiKey = normalizeApiKey(getRequiredEnv("KIE_API_KEY"))
 
@@ -85,6 +109,60 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Image is too large (max 10MB)." }, { status: 413 })
     }
 
+    // Credits: when Supabase is configured, require sign-in and deduct credits per generation.
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient()
+      const { data } = await supabase.auth.getUser()
+      userId = data.user?.id ?? null
+
+      if (!userId) {
+        return NextResponse.json({ error: "Please sign in before generating images." }, { status: 401 })
+      }
+
+      let supabaseAdmin: ReturnType<typeof createAdminClient>
+      try {
+        supabaseAdmin = createAdminClient()
+      } catch (err) {
+        return NextResponse.json(
+          { error: err instanceof Error ? err.message : "Credits system is not configured." },
+          { status: 500 },
+        )
+      }
+
+      const { data: row, error: creditsErr } = await supabaseAdmin
+        .from("user_credits")
+        .select("credits")
+        .eq("user_id", userId)
+        .maybeSingle()
+
+      if (creditsErr) {
+        return NextResponse.json({ error: creditsErr.message }, { status: 500 })
+      }
+
+      const currentCredits = row?.credits ?? 0
+      creditsBefore = currentCredits
+      if (currentCredits < creditsCost) {
+        return NextResponse.json(
+          { error: `Insufficient credits. Need ${creditsCost} credits per generation.` },
+          { status: 402 },
+        )
+      }
+
+      const nextCredits = currentCredits - creditsCost
+      const { error: deductErr } = await supabaseAdmin
+        .from("user_credits")
+        .upsert(
+          { user_id: userId, credits: nextCredits, updated_at: new Date().toISOString() },
+          { onConflict: "user_id" },
+        )
+
+      if (deductErr) {
+        return NextResponse.json({ error: deductErr.message }, { status: 500 })
+      }
+
+      deducted = true
+    }
+
     // 1) Upload the image to get a public URL (required by the KIE gpt-image job API).
     const uploadForm = new FormData()
     uploadForm.append("file", imageFile, safeFileName(imageFile.name))
@@ -102,6 +180,7 @@ export async function POST(req: Request) {
     const uploadJson = await readJson<KieUploadResponse>(uploadRes)
     const uploadedUrl = uploadJson.data?.downloadUrl ?? uploadJson.data?.fileUrl
     if (!uploadRes.ok || !uploadJson.success || !uploadedUrl) {
+      await refundCreditsIfNeeded()
       return NextResponse.json(
         {
           error:
@@ -134,6 +213,7 @@ export async function POST(req: Request) {
     const createJson = await readJson<KieApiResponse<{ taskId: string }>>(createRes)
     const taskId = createJson.data?.taskId
     if (!createRes.ok || createJson.code !== 200 || !taskId) {
+      await refundCreditsIfNeeded()
       return NextResponse.json(
         { error: createJson.message || "Failed to create generation task" },
         { status: 502 },
@@ -173,6 +253,7 @@ export async function POST(req: Request) {
       }
 
       if (recordJson.data.state === "fail") {
+        await refundCreditsIfNeeded()
         return NextResponse.json(
           { error: recordJson.data.failMsg || "Generation failed", taskId },
           { status: 502 },
@@ -190,21 +271,26 @@ export async function POST(req: Request) {
         }
 
         if (!resultUrls.length) {
+          await refundCreditsIfNeeded()
           return NextResponse.json(
             { error: "Task succeeded but no image URL was returned", taskId },
             { status: 502 },
           )
         }
 
-        return NextResponse.json({ taskId, resultUrls })
+        const creditsRemaining =
+          isSupabaseConfigured() && deducted && creditsBefore !== null ? creditsBefore - creditsCost : null
+        return NextResponse.json({ taskId, resultUrls, creditsRemaining })
       }
     }
 
+    await refundCreditsIfNeeded()
     return NextResponse.json(
       { error: "Generation timed out, please try again", taskId },
       { status: 504 },
     )
   } catch (err) {
+    await refundCreditsIfNeeded()
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: message }, { status: 500 })
   }

@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { Upload, Sparkles } from "lucide-react"
+import { CREDITS_PER_GENERATION } from "@/lib/credits"
+import { createClient } from "@/lib/supabase/client"
+import { isSupabaseConfigured } from "@/lib/supabase/env"
 
 export function EditorSection() {
   const [prompt, setPrompt] = useState("")
@@ -16,7 +19,9 @@ export function EditorSection() {
   const [resultUrls, setResultUrls] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [credits, setCredits] = useState<number | null>(null)
 
+  const supabaseConfigured = isSupabaseConfigured()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -29,6 +34,46 @@ export function EditorSection() {
     setPreviewUrl(url)
     return () => URL.revokeObjectURL(url)
   }, [selectedFile])
+
+  useEffect(() => {
+    if (!supabaseConfigured) return
+
+    const supabase = createClient()
+    let mounted = true
+
+    async function loadCredits() {
+      try {
+        const res = await fetch("/api/credits", { method: "GET", cache: "no-store" })
+        if (!mounted) return
+
+        if (res.status === 401) {
+          setCredits(null)
+          return
+        }
+        if (!res.ok) return
+        const json = (await res.json()) as { credits?: number }
+        if (typeof json.credits === "number") setCredits(json.credits)
+      } catch {
+        // Ignore: credits are only available when Supabase + DB are configured.
+      }
+    }
+
+    void loadCredits()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return
+      if (!session?.user) {
+        setCredits(null)
+        return
+      }
+      void loadCredits()
+    })
+
+    return () => {
+      mounted = false
+      authListener.subscription.unsubscribe()
+    }
+  }, [supabaseConfigured])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -68,7 +113,7 @@ export function EditorSection() {
 
       const res = await fetch("/api/generate", { method: "POST", body })
       const json = (await res.json()) as
-        | { taskId: string; resultUrls: string[] }
+        | { taskId: string; resultUrls: string[]; creditsRemaining?: number | null }
         | { error: string }
 
       if (!res.ok) {
@@ -82,6 +127,9 @@ export function EditorSection() {
       }
 
       setResultUrls(json.resultUrls)
+      if ("creditsRemaining" in json && typeof json.creditsRemaining === "number") {
+        setCredits(json.creditsRemaining)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed.")
     } finally {
@@ -103,7 +151,6 @@ export function EditorSection() {
           {/* Upload Section */}
           <Card className="p-8">
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <span>🍌</span>
               Upload Image
             </h3>
 
@@ -158,6 +205,11 @@ export function EditorSection() {
               </div>
 
               {error ? <p className="text-sm text-destructive">{error}</p> : null}
+              <p className="text-xs text-muted-foreground">
+                {typeof credits === "number"
+                  ? `Each generation costs ${CREDITS_PER_GENERATION} credits. Remaining: ${credits}.`
+                  : `Each generation costs ${CREDITS_PER_GENERATION} credits.`}
+              </p>
 
               <Button
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -179,7 +231,7 @@ export function EditorSection() {
                 <div className="text-center">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Spinner className="size-5" />
-                    <p className="text-muted-foreground text-sm">Generating…</p>
+                    <p className="text-muted-foreground text-sm">Generating...</p>
                   </div>
                   <p className="text-muted-foreground text-xs mt-2">This can take up to ~2 minutes.</p>
                 </div>
@@ -187,7 +239,7 @@ export function EditorSection() {
                 <img src={resultUrls[0]} alt="Generated result" className="w-full h-full object-contain" suppressHydrationWarning />
               ) : (
                 <div className="text-center">
-                  <div className="text-4xl mb-4">🎨</div>
+                  <div className="text-4xl mb-4">Image</div>
                   <p className="text-muted-foreground text-sm">Ready for instant generation</p>
                   <p className="text-muted-foreground text-xs mt-2">Add an image and prompt, then click Generate.</p>
                 </div>

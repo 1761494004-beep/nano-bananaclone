@@ -3,11 +3,12 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { PricingClient } from "@/components/pricing/pricing-client"
 import { getCreemPricingProducts } from "@/lib/creem/products"
+import { BASIC_MONTHLY_PRICE_USD, CREDITS_PER_GENERATION, CREDITS_PER_MONTH } from "@/lib/credits"
 import { createClient } from "@/lib/supabase/server"
 
 export const metadata: Metadata = {
   title: "Pricing - Nano Banana",
-  description: "Choose a plan that fits your needs. Cancel anytime.",
+  description: `Basic Monthly: $${BASIC_MONTHLY_PRICE_USD}/month, ${CREDITS_PER_MONTH} credits; ${CREDITS_PER_GENERATION} credits per generation.`,
 }
 
 export default async function PricingPage() {

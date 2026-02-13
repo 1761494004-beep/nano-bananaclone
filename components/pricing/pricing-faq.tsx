@@ -1,34 +1,34 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { CREDITS_PER_GENERATION, CREDITS_PER_MONTH } from "@/lib/credits"
 
 const faqs = [
   {
-    question: "What are credits and how are they used?",
+    question: "How do credits work?",
     answer:
-      "Credits are consumed when you generate images. As a rule of thumb, generating 1 high-quality image costs 2 credits.",
+      `Each image generation uses credits. One generation costs ${CREDITS_PER_GENERATION} credits.`,
+  },
+  {
+    question: "How many credits do I get each month?",
+    answer: `Basic Monthly includes ${CREDITS_PER_MONTH} credits per billing cycle.`,
   },
   {
     question: "Can I cancel anytime?",
     answer:
-      "Yes. You can cancel your subscription at any time. Your plan stays active until the end of the billing period.",
+      "Yes. You can cancel anytime, and your subscription will remain active until the end of the current billing cycle.",
   },
   {
     question: "Do unused credits roll over?",
     answer:
-      "Subscription credits refill at the start of each billing cycle. Unused subscription credits typically do not roll over.",
+      "Credits reset at the start of each billing cycle and typically do not roll over.",
   },
   {
-    question: "Can I use the images commercially?",
-    answer: "Yes. All paid plans include commercial use.",
+    question: "Can I use generated images commercially?",
+    answer: "Yes. Paid subscriptions include a commercial license.",
   },
   {
-    question: "Can I upgrade or downgrade my plan later?",
+    question: "How do I get a receipt/invoice?",
     answer:
-      "Yes. You can switch plans at any time. Plan changes usually apply immediately or at the next billing period depending on your billing settings.",
-  },
-  {
-    question: "How do I get an invoice?",
-    answer:
-      "After checkout, your receipt and invoice are provided by the payment provider. If you need help, contact support and include your purchase email.",
+      "After payment, our payment provider will provide a receipt/invoice. If you need help, contact support and include the email used for purchase.",
   },
 ]
 
@@ -37,8 +37,8 @@ export function PricingFaq() {
     <section className="bg-muted/30 rounded-2xl border px-6 py-10">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-balance">Frequently Asked Questions</h2>
-          <p className="text-muted-foreground">Everything you need to know about plans and billing.</p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-balance">FAQ</h2>
+          <p className="text-muted-foreground">Plans, billing, and credits.</p>
         </div>
 
         <Accordion type="single" collapsible className="w-full">

@@ -94,7 +94,8 @@ export function Header() {
               </>
             ) : (
               <Button asChild variant="outline">
-                <Link href="/auth/signin/google?next=/">Sign in with Google</Link>
+                {/* Use a plain anchor to avoid client-side prefetch/navigation interfering with OAuth redirects. */}
+                <a href="/auth/signin/google?next=/">Sign in with Google</a>
               </Button>
             )
           ) : (

@@ -1,5 +1,11 @@
 # Nano Banana Clone (Next.js + Supabase + Creem)
 
+## Credits (required for generation)
+- Run `supabase/credits.sql` in the Supabase SQL editor to create the `user_credits` table + RLS policy.
+- Set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (server-only). It is required so:
+  - Creem webhook can grant 1000 credits after purchase
+  - `/api/generate` can deduct 5 credits per generation
+
 本项目包含：
 - 登录：Supabase Auth（Google OAuth）
 - 支付：Creem（`/checkout` + Webhook：`/api/webhook/creem`）
@@ -70,6 +76,5 @@ pnpm dev
 ## 5) 快速验收清单
 
 - 登录：访问首页 → 点击 “Sign in with Google” → 能回到站点且 Header 显示邮箱
-- 支付：访问 `/pricing` → 点击任一套餐 → 能跳转到 Creem Checkout
+- 支付：访问 `/pricing` → 点击基础月付 → 能跳转到 Creem Checkout
 - Webhook：完成支付后，Creem Dashboard 能看到 webhook 事件成功投递到 `/api/webhook/creem`
-
