@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { isSupabaseConfigured } from "@/lib/supabase/env"
 import { createClient } from "@/lib/supabase/server"
-import { CREDITS_PER_GENERATION } from "@/lib/credits"
+import { CREDITS_PER_GENERATION, DAILY_FREE_CREDITS } from "@/lib/credits"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 const KIE_API_BASE_URL = "https://api.kie.ai"
@@ -65,17 +65,25 @@ export const runtime = "nodejs"
 export async function POST(req: Request) {
   const creditsCost = CREDITS_PER_GENERATION
   let deducted = false
-  let creditsBefore: number | null = null
+  let paidBefore: number | null = null
+  let freeBefore: number | null = null
+  let freeDateBefore: string | null = null
   let userId: string | null = null
 
   async function refundCreditsIfNeeded() {
-    if (!deducted || creditsBefore === null || !userId) return
+    if (!deducted || paidBefore === null || freeBefore === null || !userId) return
     try {
       const supabaseAdmin = createAdminClient()
       await supabaseAdmin
         .from("user_credits")
         .upsert(
-          { user_id: userId, credits: creditsBefore, updated_at: new Date().toISOString() },
+          {
+            user_id: userId,
+            credits: paidBefore,
+            free_credits_remaining: freeBefore,
+            free_credits_date: freeDateBefore ?? new Date().toISOString().slice(0, 10),
+            updated_at: new Date().toISOString(),
+          },
           { onConflict: "user_id" },
         )
     } catch {
@@ -129,30 +137,86 @@ export async function POST(req: Request) {
         )
       }
 
+      const today = new Date().toISOString().slice(0, 10) // UTC date
+
       const { data: row, error: creditsErr } = await supabaseAdmin
         .from("user_credits")
-        .select("credits")
+        .select("credits, free_credits_remaining, free_credits_date")
         .eq("user_id", userId)
         .maybeSingle()
 
       if (creditsErr) {
+        if (creditsErr.message.includes("schema cache") || creditsErr.message.includes("user_credits")) {
+          return NextResponse.json(
+            {
+              error:
+                "Credits table is not set up in Supabase. Run `supabase/credits.sql` in Supabase SQL Editor, then reload the API schema cache and retry.",
+            },
+            { status: 500 },
+          )
+        }
+
         return NextResponse.json({ error: creditsErr.message }, { status: 500 })
       }
 
-      const currentCredits = row?.credits ?? 0
-      creditsBefore = currentCredits
-      if (currentCredits < creditsCost) {
+      let paid = row?.credits ?? 0
+      let freeRemaining = row?.free_credits_remaining ?? DAILY_FREE_CREDITS
+      let freeDate = row?.free_credits_date ?? today
+
+      // Ensure daily quota exists and resets per UTC day.
+      if (!row || freeDate !== today) {
+        freeRemaining = DAILY_FREE_CREDITS
+        freeDate = today
+        const { error: initErr } = await supabaseAdmin
+          .from("user_credits")
+          .upsert(
+            {
+              user_id: userId,
+              free_credits_remaining: freeRemaining,
+              free_credits_date: today,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "user_id" },
+          )
+
+        if (initErr) {
+          return NextResponse.json({ error: initErr.message }, { status: 500 })
+        }
+      }
+
+      paidBefore = paid
+      freeBefore = freeRemaining
+      freeDateBefore = freeDate
+
+      const available = paid + freeRemaining
+      if (available < creditsCost) {
         return NextResponse.json(
           { error: `Insufficient credits. Need ${creditsCost} credits per generation.` },
           { status: 402 },
         )
       }
 
-      const nextCredits = currentCredits - creditsCost
+      // Deduct from free quota first, then paid credits.
+      let nextFree = freeRemaining
+      let nextPaid = paid
+      if (nextFree >= creditsCost) {
+        nextFree -= creditsCost
+      } else {
+        const rest = creditsCost - nextFree
+        nextFree = 0
+        nextPaid = Math.max(0, nextPaid - rest)
+      }
+
       const { error: deductErr } = await supabaseAdmin
         .from("user_credits")
         .upsert(
-          { user_id: userId, credits: nextCredits, updated_at: new Date().toISOString() },
+          {
+            user_id: userId,
+            credits: nextPaid,
+            free_credits_remaining: nextFree,
+            free_credits_date: today,
+            updated_at: new Date().toISOString(),
+          },
           { onConflict: "user_id" },
         )
 
@@ -279,7 +343,10 @@ export async function POST(req: Request) {
         }
 
         const creditsRemaining =
-          isSupabaseConfigured() && deducted && creditsBefore !== null ? creditsBefore - creditsCost : null
+          isSupabaseConfigured() && deducted && paidBefore !== null && freeBefore !== null
+            ? // At this point, DB already has the deducted values; compute from "before" snapshot.
+              paidBefore + freeBefore - creditsCost
+            : null
         return NextResponse.json({ taskId, resultUrls, creditsRemaining })
       }
     }

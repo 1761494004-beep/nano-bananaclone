@@ -5,9 +5,19 @@
 
 create table if not exists public.user_credits (
   user_id uuid primary key references auth.users (id) on delete cascade,
+  -- Paid/subscription credits.
   credits integer not null default 0,
+  -- Daily free credits (reset once per UTC day).
+  free_credits_remaining integer not null default 30,
+  free_credits_date date not null default current_date,
   updated_at timestamptz not null default now()
 );
+
+-- Backwards/forwards compatible migrations.
+alter table public.user_credits
+  add column if not exists free_credits_remaining integer not null default 30;
+alter table public.user_credits
+  add column if not exists free_credits_date date not null default current_date;
 
 alter table public.user_credits enable row level security;
 
