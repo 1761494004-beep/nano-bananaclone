@@ -42,10 +42,19 @@ export function Header() {
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="text-2xl">🍌</div>
-          <span className="font-bold text-xl text-foreground">Nano Banana</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="text-2xl">🍌</div>
+            <span className="font-bold text-xl text-foreground">Nano Banana</span>
+          </Link>
+          <a
+            id="contact"
+            href="mailto:1761494004@qq.com"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            1761494004@qq.com
+          </a>
+        </div>
         <nav className="hidden md:flex items-center gap-8">
           <Link
             href="/#editor"

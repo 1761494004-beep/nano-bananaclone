@@ -18,7 +18,7 @@ export function Footer() {
             <a href="#" className="hover:text-foreground transition-colors">
               Terms
             </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            <a href="#contact" className="hover:text-foreground transition-colors">
               Contact
             </a>
           </div>
