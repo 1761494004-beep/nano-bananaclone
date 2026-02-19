@@ -47,13 +47,9 @@ export function Header() {
             <div className="text-2xl">🍌</div>
             <span className="font-bold text-xl text-foreground">Nano Banana</span>
           </Link>
-          <a
-            id="contact"
-            href="mailto:1761494004@qq.com"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <span className="text-xs text-muted-foreground">
             1761494004@qq.com
-          </a>
+          </span>
         </div>
         <nav className="hidden md:flex items-center gap-8">
           <Link
