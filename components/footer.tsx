@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export function Footer() {
   return (
     <footer className="py-12 px-4 border-t border-border">
@@ -9,18 +11,21 @@ export function Footer() {
           </div>
 
           <div className="flex gap-8 text-sm text-muted-foreground">
-            <a href="/pricing" className="hover:text-foreground transition-colors">
+            <Link href="/pricing" className="hover:text-foreground transition-colors">
               Pricing
-            </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
               Privacy
-            </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            </Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
               Terms
-            </a>
-            <a href="#contact" className="hover:text-foreground transition-colors">
+            </Link>
+            <Link href="/acceptable-use" className="hover:text-foreground transition-colors">
+              Acceptable Use
+            </Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">
               Contact
-            </a>
+            </Link>
           </div>
 
           <p className="text-sm text-muted-foreground">© 2026 Nano Banana. All rights reserved.</p>

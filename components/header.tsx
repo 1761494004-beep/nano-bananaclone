@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { isSupabaseConfigured } from "@/lib/supabase/env"
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support"
 
 export function Header() {
   const supabaseConfigured = isSupabaseConfigured()
@@ -47,9 +48,12 @@ export function Header() {
             <div className="text-2xl">🍌</div>
             <span className="font-bold text-xl text-foreground">Nano Banana</span>
           </Link>
-          <span className="text-xs text-muted-foreground">
-            1761494004@qq.com
-          </span>
+          <a
+            href={SUPPORT_MAILTO}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {SUPPORT_EMAIL}
+          </a>
         </div>
         <nav className="hidden md:flex items-center gap-8">
           <Link

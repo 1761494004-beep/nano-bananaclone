@@ -52,7 +52,7 @@ export default function RootLayout({
               gtag('config', 'G-5359QQZ2CS');
             `}
           </Script>
-          {/* Anchor target for footer "Contact" link. Keep it in normal flow (not fixed) so hash scrolling works. */}
+          {/* Legacy anchor target for old "#contact" links. Keep it in normal flow so hash scrolling works. */}
           <div id="contact" />
           {children}
           <Analytics />
