@@ -5,8 +5,8 @@ import { Footer } from "@/components/footer"
 import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Nano Banana",
-  description: "Privacy Policy for Nano Banana.",
+  title: "Privacy Policy - cartoonphoto",
+  description: "Privacy Policy for cartoonphoto.",
 }
 
 export default function PrivacyPage() {
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
 
         <section className="mt-10 space-y-6 text-sm leading-6 text-foreground">
           <p>
-            This Privacy Policy explains how Nano Banana (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares information
+            This Privacy Policy explains how cartoonphoto (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares information
             when you use our website and AI image editor (the &quot;Service&quot;).
           </p>
 

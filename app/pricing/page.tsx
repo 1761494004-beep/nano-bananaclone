@@ -7,7 +7,7 @@ import { BASIC_MONTHLY_PRICE_USD, CREDITS_PER_GENERATION, CREDITS_PER_MONTH } fr
 import { createClient } from "@/lib/supabase/server"
 
 export const metadata: Metadata = {
-  title: "Pricing - Nano Banana",
+  title: "Pricing - cartoonphoto",
   description: `Basic Monthly: $${BASIC_MONTHLY_PRICE_USD}/month, ${CREDITS_PER_MONTH} credits; ${CREDITS_PER_GENERATION} credits per generation.`,
 }
 

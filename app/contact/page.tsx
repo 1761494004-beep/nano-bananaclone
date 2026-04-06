@@ -4,8 +4,8 @@ import { Footer } from "@/components/footer"
 import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support"
 
 export const metadata: Metadata = {
-  title: "Contact - Nano Banana",
-  description: "How to contact Nano Banana support.",
+  title: "Contact - cartoonphoto",
+  description: "How to contact cartoonphoto support.",
 }
 
 export default function ContactPage() {
@@ -41,4 +41,3 @@ export default function ContactPage() {
     </main>
   )
 }
-

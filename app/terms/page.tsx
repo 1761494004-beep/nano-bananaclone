@@ -5,8 +5,8 @@ import { Footer } from "@/components/footer"
 import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support"
 
 export const metadata: Metadata = {
-  title: "Terms of Service - Nano Banana",
-  description: "Terms of Service for Nano Banana.",
+  title: "Terms of Service - cartoonphoto",
+  description: "Terms of Service for cartoonphoto.",
 }
 
 export default function TermsPage() {
@@ -20,7 +20,7 @@ export default function TermsPage() {
 
         <section className="mt-10 space-y-6 text-sm leading-6 text-foreground">
           <p>
-            These Terms of Service (&quot;Terms&quot;) govern your access to and use of the Nano Banana website and AI image editor
+            These Terms of Service (&quot;Terms&quot;) govern your access to and use of the cartoonphoto website and AI image editor
             (the &quot;Service&quot;). By using the Service, you agree to these Terms.
           </p>
 

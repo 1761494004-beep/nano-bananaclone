@@ -9,7 +9,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Nano Banana - AI Image Editor",
+  title: "cartoonphoto - AI Image Editor",
   description: "Transform any image with simple text prompts using advanced AI technology",
   generator: "v0.app",
   icons: {

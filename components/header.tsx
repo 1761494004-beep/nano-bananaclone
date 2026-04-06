@@ -46,7 +46,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <div className="text-2xl">🍌</div>
-            <span className="font-bold text-xl text-foreground">Nano Banana</span>
+            <span className="font-bold text-xl text-foreground">cartoonphoto</span>
           </Link>
           <a
             href={SUPPORT_MAILTO}

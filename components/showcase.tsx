@@ -6,25 +6,25 @@ const showcaseItems = [
   {
     title: "Ultra-Fast Mountain Generation",
     description: "Created in 0.8 seconds with optimized neural engine",
-    badge: "Nano Banana Speed",
+    badge: "cartoonphoto Speed",
     image: "/majestic-mountain-vista.png",
   },
   {
     title: "Instant Garden Creation",
     description: "Complex scene rendered in milliseconds",
-    badge: "Nano Banana Speed",
+    badge: "cartoonphoto Speed",
     image: "/beautiful-garden.jpg",
   },
   {
     title: "Real-time Beach Synthesis",
     description: "Delivers photorealistic results at lightning speed",
-    badge: "Nano Banana Speed",
+    badge: "cartoonphoto Speed",
     image: "/tropical-beach-paradise.png",
   },
   {
     title: "Rapid Aurora Generation",
     description: "Advanced effects processed instantly",
-    badge: "Nano Banana Speed",
+    badge: "cartoonphoto Speed",
     image: "/aurora-borealis.png",
   },
 ]
@@ -60,10 +60,10 @@ export function Showcase() {
         </div>
 
         <div className="text-center">
-          <p className="text-muted-foreground mb-4">Experience the power of Nano Banana yourself</p>
+          <p className="text-muted-foreground mb-4">Experience the power of cartoonphoto yourself</p>
           <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
             <span className="mr-2">🍌</span>
-            Try Nano Banana Generator
+            Try cartoonphoto
           </Button>
         </div>
       </div>

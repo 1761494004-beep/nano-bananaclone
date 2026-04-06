@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
-    question: "What is Nano Banana?",
+    question: "What is cartoonphoto?",
     answer:
       "It's a revolutionary AI image editing model that transforms photos using natural language prompts. Currently the most powerful image editing model available, with exceptional consistency and superior performance for character editing and scene preservation.",
   },
@@ -27,9 +27,14 @@ const faqs = [
       "The editor handles complex edits including face completion, background changes, object placement, style transfers, and character modifications. It excels at understanding contextual instructions while maintaining photorealistic quality.",
   },
   {
-    question: "Where can I try Nano Banana?",
+    question: "Where can I try cartoonphoto?",
     answer:
-      "You can try Nano Banana through our web interface. Simply upload your image, enter a text prompt describing your desired edits, and watch as the AI transforms your photo with incredible accuracy and consistency.",
+      "You can try cartoonphoto through our web interface. Simply upload your image, enter a text prompt describing your desired edits, and watch as the AI transforms your photo with incredible accuracy and consistency.",
+  },
+  {
+    question: "What AI technology powers this product?",
+    answer:
+      "cartoonphoto uses third-party AI APIs to power its image editing features. We are an independent product and are not affiliated with, endorsed by, or officially connected to any AI model provider.",
   },
 ]
 

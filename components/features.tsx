@@ -40,7 +40,7 @@ export function Features() {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Core Features</h2>
-          <p className="text-xl text-muted-foreground text-pretty">Why Choose Nano Banana?</p>
+          <p className="text-xl text-muted-foreground text-pretty">Why Choose cartoonphoto?</p>
           <p className="text-muted-foreground mt-2 text-sm">
             The most advanced AI image editor with natural language understanding
           </p>
