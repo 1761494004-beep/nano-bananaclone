@@ -61,8 +61,15 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold">Payments</h2>
             <p>
               If you purchase a plan or credits, payments are handled by our payment provider. Prices, features, and
-              limits may change. To the extent permitted by law, all purchases are final unless otherwise stated at
-              checkout.
+              limits may change. Paid plans may renew automatically until canceled. You can review public pricing on our{" "}
+              <Link className="underline" href="/pricing">
+                Pricing page
+              </Link>{" "}
+              and subscription management details on our{" "}
+              <Link className="underline" href="/billing">
+                Billing Policy
+              </Link>
+              . To the extent permitted by law, charges are final unless otherwise stated at checkout or required by law.
             </p>
           </div>
 
